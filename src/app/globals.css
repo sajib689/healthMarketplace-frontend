@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
+
+body {
+  font-family: var(--font-roboto-flex);
+}
+
+/*  */
+
+.navSubLink {
+  clip-path: polygon(0 8%, 65% 8%, 69% 0, 75% 8%, 100% 8%, 100% 100%, 0 100%);
+}
+
+.navSubLinkTwo {
+  clip-path: polygon(
+    0 10%,
+    65% 10%,
+    69% 0,
+    75% 10%,
+    100% 10%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.primaryButton {
+  padding: 10px 40px;
+  border: 1px solid black;
+  border-radius: 100%;
+}
+
+.swiper-slide {
+  height: auto !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+td,
+th {
+  white-space: nowrap;
+}

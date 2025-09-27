@@ -1,0 +1,24 @@
+Receipt
+Pubby LLC
+
+
+T
+
+
+
+To: tracey@ktrmanagers.com.au
+Date: Dec 14, 2023
+
+Product: Pubby Membership
+Invoice Number: 95747
+Pubby LLC
+
+
+
+Description          Date                      Amount
+
+Starting Balance                                $0.00
+
+Subscription (1)        December 14, 2023 - December 14, 2024     $240.00
+
+Total  $240.00
