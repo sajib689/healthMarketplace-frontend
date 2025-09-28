@@ -18,7 +18,7 @@ import useAuthUser from "@/hooks/useGetMe";
 const RecentProjects = () => {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState<number | null>(null);
-  const [category, setCategory] = useState<string>("clinical");
+  const [category, setCategory] = useState<string>("YourCategoryValue");
 
   const { user } = useAuthUser();
   const {
@@ -80,7 +80,7 @@ const RecentProjects = () => {
       </div>
 
       {/* Filter dropdown */}
-      <div className="w-full md:w-64">
+      <div className="w-full md:w-64 mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Filter by category
         </label>
@@ -97,9 +97,7 @@ const RecentProjects = () => {
     appearance-none
   "
           >
-            <option value="clinical">Clinical</option>
-            <option value="website Development">Website Development</option>
-            <option value="">All</option>
+            <option value="YourCategoryValue">YourCategoryValue</option>
           </select>
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
             <svg

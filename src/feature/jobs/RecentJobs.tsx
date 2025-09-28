@@ -19,7 +19,7 @@ const RecentJobs = () => {
 
   // State to manage active tab and filtered job posts
   const [activeTab, setActiveTab] = useState("clinical");
-  const [filteredPosts, setFilteredPosts] = useState("");
+  const [, setFilteredPosts] = useState("");
   const [category, setCategory] = useState<string>("clinical");
 
   const {
@@ -28,8 +28,7 @@ const RecentJobs = () => {
     error,
   } = useGetJobsQuery({
     limit: 6,
-    jobCategorySlug: filteredPosts || undefined,
-    category,
+    jobCategorySlug: category,
   });
 
   // Categories for filtering
@@ -111,8 +110,7 @@ const RecentJobs = () => {
             "
           >
             <option value="clinical">Clinical</option>
-            <option value="website Development">Website Development</option>
-            <option value="">All</option>
+            <option value="non-clinical">Non Clinical</option>
           </select>
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
             <svg

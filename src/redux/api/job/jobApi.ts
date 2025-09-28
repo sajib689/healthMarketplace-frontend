@@ -103,13 +103,14 @@ export const jobApi = baseApi.injectEndpoints({
       invalidatesTags: ["Jobs"],
     }),
     getJobs: builder.query<JobsListResponse, PaginationParams>({
-      query: ({ data, category }) => ({
-        url: "/jobs",
-        method: "GET",
-        params: { data, category },
-      }),
-      providesTags: ["Jobs"],
-    }),
+  query: ({ limit, jobCategorySlug }) => ({
+    url: "/jobs",
+    method: "GET",
+    params: { limit, jobCategorySlug },   // ✅ send limit & category to backend
+  }),
+  providesTags: ["Jobs"],
+}),
+
     getRelatedJobs: builder.query<
       JobsListResponse,
       RelatedJobsParams & PaginationParams
