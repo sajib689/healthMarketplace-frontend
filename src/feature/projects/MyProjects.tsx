@@ -92,8 +92,8 @@ const MyProjects = () => {
         }}
         action={
           <PrimaryButton
-            onClick={() => {}}
-            // onClick={() => refreshProjects()}
+            onClick={() => { }}
+          // onClick={() => refreshProjects()}
           >
             Refresh Projects
           </PrimaryButton>
@@ -101,8 +101,8 @@ const MyProjects = () => {
         loading={isLoading}
         error={error as any}
         spinnerSize="lg"
-        errorMessage=" Please try again later."
-        errorTitle="No data found"
+        errorMessage=" Failed to fetch projects. Please try again later."
+        errorTitle="Error Fetching Projects"
         loadingMessage="Fetching latest projects..."
         loadingTitle=" Loading Projects"
       >
@@ -116,9 +116,8 @@ const MyProjects = () => {
                 whileInView={{ opacity: 1 }} // Animate when in viewport
                 viewport={{ once: true, amount: 0.2 }} // Trigger once when 20% visible
                 transition={{ duration: 0.1 * (index + 1), ease: "easeIn" }}
-                className={`border-t lg:odd:border-r ${
-                  index >= (myProjects?.data?.length ?? 0) - 2 ? "border-b" : ""
-                }`}
+                className={`border-t lg:odd:border-r ${index >= (myProjects?.data?.length ?? 0) - 2 ? "border-b" : ""
+                  }`}
               >
                 <UdProjectsCard
                   projectId={post.id}
@@ -139,7 +138,7 @@ const MyProjects = () => {
                   deadline={post.deadline}
                   description={post.goal}
                   handleDeleteProject={handleDeleteProject}
-                  handleToggleFavorite={() => {}}
+                  handleToggleFavorite={() => { }}
                   slug={post.slug}
                   status={post.status}
                   id={post.id}
@@ -168,8 +167,8 @@ const MyProjects = () => {
                       handleUpdateProjects={handleUpdateProjects}
                       buttonLoading={updating}
                       scopeOfWork={post.scopeOfWork}
-                      handleToggleFavorite={() => {}}
-                      // onClose={() => setIsModalOpen(null)}
+                      handleToggleFavorite={() => { }}
+                    // onClose={() => setIsModalOpen(null)}
                     />
                   </Modal>
                 }

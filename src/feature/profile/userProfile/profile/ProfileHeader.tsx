@@ -7,6 +7,7 @@ import { OnboardingButton } from "./stripe/Onboarding";
 import { DashboardButton } from "./stripe/StripeDashboard";
 import Image from "next/image";
 import stripe from "@/assets/pay/stripe.png";
+import HasAccessComponents from "@/components/shared/hasAccessComponents/HasAccessComponents";
 interface ProfileHeaderProps {
   profileImage: string;
   firstName: string;
@@ -98,29 +99,32 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
           <p className="text-gray-600">{title}</p>
         </div>
       </div>
-      {/* stripe account  */}
-      <div className="border p-4 rounded-md shadow-lg ">
-        <div className="flex items-center gap-1 mb-4">
-          <Image src={stripe} alt="stripe logo" width={100} height={100} />
-          <h2 className="text-4xl font-bold text-primary ">Account</h2>
+      <HasAccessComponents roles={["INDIVIDUAL"]}>
+        {/* stripe account  */}
+        <div className="border p-4 rounded-md shadow-lg ">
+          <div className="flex items-center gap-1 mb-4">
+            <Image src={stripe} alt="stripe logo" width={100} height={100} />
+            <h2 className="text-4xl font-bold text-primary ">Account</h2>
+          </div>
+          <AccountStatus
+            refetch={refetch ? refetch : () => { }}
+            status={status || ""}
+          />
+          <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
+            {status === "new " || status === "complete" ? (
+              <DashboardButton />
+            ) : (
+              <div>
+                <OnboardingButton />
+                <p className="text-warning mt-1 text-sm">
+                  *Please Connect your stripe account
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-        <AccountStatus
-          refetch={refetch ? refetch : () => {}}
-          status={status || ""}
-        />
-        <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-          {status === "new " || status === "completed" ? (
-            <DashboardButton />
-          ) : (
-            <div>
-              <OnboardingButton />
-              <p className="text-warning mt-1 text-sm">
-                *Please Connect your stripe account
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      </HasAccessComponents>
+
     </div>
   );
 };

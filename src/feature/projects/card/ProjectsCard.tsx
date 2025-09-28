@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Tag } from "./Tag";
 import { JobCardProps, ModalProps } from "./cardTypes";
 import { UserPlaceholder } from "@/lib/placeholder";
+import { hasAccess } from "@/hooks/useHasAccess";
 
 export const ProjectsCard = ({
   name,
@@ -33,7 +34,7 @@ export const ProjectsCard = ({
           <Image
             width={40}
             height={40}
-            src={avatar }
+            src={avatar}
             alt={name}
             className="w-10 h-10 rounded-full"
             blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZWVlZWVlIi8+PC9zdmc+"
@@ -61,8 +62,8 @@ export const ProjectsCard = ({
           >
             <BookmarkIcon
               className={`w-6 h-6 ${isFavorite
-                  ? "fill-secondary text-secondary"
-                  : "hover:fill-secondary"
+                ? "fill-secondary text-secondary"
+                : "hover:fill-secondary"
                 }`}
             />
           </button>
@@ -121,14 +122,18 @@ export const ProjectsCard = ({
             ""
           ) : (
             <button
-              onClick={onOpen}
+              onClick={() => hasAccess({
+                roles: ["INDIVIDUAL"], // roles allowed
+                event: onOpen,               // function to run if allowed
+              })}
               className="w-full sm:w-auto px-6 py-2 bg-secondary/80 hover:bg-secondary text-white font-medium rounded-xl transition-colors"
             >
               Bid Now
             </button>
           )}
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   );
 };

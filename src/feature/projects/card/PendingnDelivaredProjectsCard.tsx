@@ -41,11 +41,10 @@ export const PendingProjectsCard = ({
           {/* Title */}
           <div>
             <div className="max-w-3xl">
-              <h1 className="text-xl font-semibold text-gray-900 ">{title}</h1>
+              <h1 className="text-xl font-semibold text-gray-900 line-clamp-3">{title}</h1>
             </div>
             <p className="text-sm text-gray-500 mt-1">Posted {postedTime}</p>
           </div>
-
           <div>
             {/* Price and Deadline */}
             <div className="grid grid-cols-2 gap-4 py-4 min-w-80">

@@ -23,6 +23,10 @@ const profile = [
     name: "Payment",
     link: "/payment",
   },
+  {
+    name: "Support",
+    link: "/support",
+  }
 ];
 
 const useAuthUser = () => {
@@ -41,7 +45,6 @@ const useAuthUser = () => {
 
     if (token) {
       try {
-        const decoded: DecodedToken = jwtDecode(token);
         const decodedUser = jwtDecode<DecodedToken>(token);
         // console.log(decodedUser);
         setTemp(decodedUser);
@@ -78,13 +81,17 @@ const useAuthUser = () => {
               link: "/company",
             },
             {
+              name: "My Plans",
+              link: "/my-plans",
+            },
+            {
               name: "Job List",
               link: "/job-list",
             },
             ...profile,
           ]);
         }
-        if (decoded.exp * 1000 < Date.now()) {
+        if (decodedUser.exp * 1000 < Date.now()) {
           // Check if the token is expired
           Cookies.remove("token");
           return;

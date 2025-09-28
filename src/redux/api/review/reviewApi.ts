@@ -59,7 +59,7 @@ export const reviewApi = baseApi.injectEndpoints({
     }),
     getAllMyReviews: builder.query<ReviewResponse, void>({
       query: () => ({
-        url: "/review/my-reviews",
+        url: "/review/get-my-reviews",
         method: "GET",
       }),
       providesTags: ["Reviews"],

@@ -240,6 +240,7 @@ const AllConsultation = () => {
           <p>
             Showing {filteredDoctors.length} of {doctors.length} results
             {searchTerm && ` for "${searchTerm}"`}
+
           </p>
         )}
         {!searchTerm && (

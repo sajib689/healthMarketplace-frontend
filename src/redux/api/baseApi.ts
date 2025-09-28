@@ -28,6 +28,7 @@ export const baseApi = createApi({
     "Bookings",
     "Delivery",
     "Categories",
+    "Subscription"
   ],
 });
 

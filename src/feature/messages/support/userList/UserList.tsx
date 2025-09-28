@@ -1,5 +1,5 @@
 import Title from "antd/es/typography/Title";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 import getTimeDifference from "@/lib/getTimeDifference";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -30,6 +30,8 @@ const UserList: FC<UserListProps> = ({
   const userId = searchParams.get("user") as string;
   const currentUserId = useAuthUser()?.user?.id;
 
+  const [search, setSearch] = useState("");
+
   const { data: singleUser } = useGetSingleUserByIdQuery(userId, {
     skip: !userId || chatMembers?.some((member) => member.user.id === userId),
   });
@@ -50,16 +52,29 @@ const UserList: FC<UserListProps> = ({
         unreadCount: 0,
       });
     }
-    return users;
-  }, [chatMembers, singleUser, userId]);
+
+    // filter by search
+    return users.filter((u) =>
+      `${u.user.firstName} ${u.user.lastName}`
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+  }, [chatMembers, singleUser, userId, search]);
 
   return (
     <div className="bg-white rounded-2xl h-full flex flex-col shadow-sm border border-gray-200">
-      {/* Header */}
-      <div className="p-6 border-b border-gray-200">
+      {/* Header with search */}
+      <div className="p-6 border-b border-gray-200 flex flex-col gap-3">
         <Title level={4} className="!m-0 text-gray-800 font-semibold">
           Messages
         </Title>
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search..."
+          className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
       </div>
 
       {/* User List */}
@@ -113,7 +128,7 @@ const UserCard: FC<UserCardProps & { currentUserId?: string }> = ({
           : "border-transparent hover:bg-gray-50 hover:shadow-sm"
         }`}
     >
-      {/* Avatar with Online Status */}
+      {/* Avatar */}
       <div className="relative">
         <Image
           src={user.profilePicture || UserPlaceholder.src}
@@ -121,7 +136,7 @@ const UserCard: FC<UserCardProps & { currentUserId?: string }> = ({
           width={48}
           height={48}
           className="rounded-full object-cover ring-1 ring-gray-200"
-          blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZWVlZWVlIi8+PC9zdmc+"
+          blurDataURL="data:image/svg+xml;base64,..."
           placeholder="blur"
           loading="lazy"
         />
@@ -130,12 +145,13 @@ const UserCard: FC<UserCardProps & { currentUserId?: string }> = ({
         )}
       </div>
 
-      {/* User Info */}
+      {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
           <Title
             level={5}
-            className={`!m-0 font-semibold ${isActive ? "text-primary" : "text-gray-800"}`}
+            className={`!m-0 font-semibold ${isActive ? "text-primary" : "text-gray-800"
+              }`}
           >
             {user.firstName} {user.lastName}
           </Title>

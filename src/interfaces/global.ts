@@ -212,7 +212,7 @@ export interface DeliveryResponse {
   data: Delivery[];
 }
 
-export interface AgreementWithProject extends Omit<Agreement, "project"> {
+export interface AgreementWithProject extends Omit<Agreement, 'project'> {
   project: {
     id: string;
     userId: string;
@@ -237,8 +237,8 @@ export interface AgreementWithProject extends Omit<Agreement, "project"> {
       role: string;
       profilePicture: string | null;
     };
-  };
-  freelancer: bidUser;
+  },
+  freelancer: bidUser
 }
 
 export interface DetailedDelivery {
@@ -295,7 +295,6 @@ export interface PaginationParams {
   subCategorySlug?: string;
   jobCategorySlug?: string;
   category?: string;
-  data?: any
 }
 
 type Applicant = {
@@ -327,7 +326,7 @@ export type Job = {
   yourPosition: string;
   location: string;
   jobType: string;
-  jobCategorySlug: string;
+  jobCategorySlug: string
   salaryRange: string;
   experienceLevel: string;
   aboutTheJob: string;

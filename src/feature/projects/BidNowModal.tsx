@@ -6,6 +6,7 @@ import { JobCardProps } from "./card/cardTypes";
 import { Tag } from "./card/Tag";
 import { useCreateBidMutation } from "@/redux/api/bid/bidApi";
 import { UserPlaceholder } from "@/lib/placeholder";
+import { hasAccess } from "@/hooks/useHasAccess";
 
 type CloseModal = {
   onClose: () => void;
@@ -214,7 +215,10 @@ export const BidNowModal = ({
           ""
         ) : (
           <button
-            onClick={handleBidSubmit}
+            onClick={() => hasAccess({
+              roles: ["INDIVIDUAL"], // roles allowed
+              event: handleBidSubmit,               // function to run if allowed
+            })}
             disabled={isLoading}
             className="w-full sm:w-auto px-6 py-2 bg-secondary/80 hover:bg-secondary text-white font-medium rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >

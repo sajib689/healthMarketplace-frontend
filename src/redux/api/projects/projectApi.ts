@@ -18,8 +18,9 @@ export const projectApi = baseApi.injectEndpoints({
     }),
     updateProject: builder.mutation<
       ProjectResponse,
-      { id: string; data: Partial<CreateProjectBody> }
-    >({
+      { id: string; data: Partial<CreateProjectBody> }>
+      
+      ({
       query: ({ id, data }) => ({
         url: `/project/${id}`,
         method: "PUT",
@@ -31,7 +32,7 @@ export const projectApi = baseApi.injectEndpoints({
       query: () => "/project/my-projects",
       providesTags: ["Project"],
     }),
-    getAllProjects: builder.query<ProjectsResponse, PaginationParams>({
+   getAllProjects: builder.query<ProjectsResponse, PaginationParams>({
       query: ({ limit, page, searchTerm, category  }) => ({
         url: "/project",
         params: { limit, page, searchTerm, category  },
@@ -57,7 +58,7 @@ export const {
   useUpdateProjectMutation,
   useGetMyProjectsQuery,
   useGetAllProjectsQuery,
-  // call it
+  // call it 
   useGetProjectBySlugQuery,
   useDeleteProjectMutation,
 } = projectApi;

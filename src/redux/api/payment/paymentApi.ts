@@ -98,6 +98,45 @@ type PaymentQueryParams = {
   page?: number;
 };
 
+// Subscription Plan types
+type SubscriptionPlan = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  duration: string;
+  currency: string;
+  limitedJobPosts: number;
+  stripeProductId: string;
+  stripePriceId: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type SubscriptionPlansResponse = {
+  success: boolean;
+  message: string;
+  data: SubscriptionPlan[];
+};
+
+type SubscriptionCheckoutRequest = {
+  planId: string;
+};
+
+type SubscriptionCheckoutResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    url: {
+      id: string;
+      object: string;
+      url: string;
+      // Other Stripe checkout session properties can be added as needed
+    };
+  };
+};
+
 const bookingApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createPaymentAgreement: builder.mutation<
@@ -152,8 +191,27 @@ const bookingApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      // You might want to add a new tag for withdrawals if you'll have other withdrawal-related endpoints
-      invalidatesTags: ["Bid"], // or add a new tag like "Withdrawal"
+      invalidatesTags: ["Bid"],
+    }),
+
+    // New subscription endpoints
+    getSubscriptionPlans: builder.query<SubscriptionPlansResponse, void>({
+      query: () => ({
+        url: "/subscription-plan",
+        method: "GET",
+      }),
+      providesTags: ["Subscription"],
+    }),
+
+    createSubscriptionCheckout: builder.mutation<
+      SubscriptionCheckoutResponse,
+      SubscriptionCheckoutRequest
+    >({
+      query: (body) => ({
+        url: "/subscription-routes/checkout",
+        method: "POST",
+        body,
+      }),
     }),
   }),
 });
@@ -165,4 +223,7 @@ export const {
   useGetPayerPaymentsQuery,
   useGetReceiverPaymentsQuery,
   useCreateWithdrawalRequestMutation,
+  // New subscription hooks
+  useGetSubscriptionPlansQuery,
+  useCreateSubscriptionCheckoutMutation,
 } = bookingApi;

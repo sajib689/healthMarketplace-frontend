@@ -11,7 +11,7 @@ interface ModalProps {
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children }) => {
     if (typeof window === "undefined") return null; // Prevents SSR issues
-    console.log(isOpen)
+    // console.log(isOpen)
     return createPortal(
         <AnimatePresence>
             {isOpen && (

@@ -35,7 +35,7 @@ export default function ForgetPassPage() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    console.log("Form Data:", data);
+    // console.log("Form Data:", data);
     try {
       const response = await forgetPassword(data).unwrap();
       if (response?.success) {
@@ -71,9 +71,8 @@ export default function ForgetPassPage() {
             type="email"
             placeholder="georgiayoung@example.com"
             {...register("email")}
-            className={`w-full px-3 py-2 border ${
-              errors.email ? "border-red-500" : "border-gray-200"
-            } rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500`}
+            className={`w-full px-3 py-2 border ${errors.email ? "border-red-500" : "border-gray-200"
+              } rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500`}
           />
           {errors.email && (
             <p className="text-red-500 text-xs">{errors.email.message}</p>

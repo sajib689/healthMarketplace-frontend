@@ -28,7 +28,7 @@ const RecentProjects = () => {
   } = useGetAllProjectsQuery({
     limit: 4,
     sort: "-createdAt",
-    category,
+    category
   });
 
   const [toggleFavorite] = useToggleFavoriteMutation();
@@ -44,6 +44,7 @@ const RecentProjects = () => {
       } else {
         toast.error("Failed to add project to favorites.");
       }
+      // Handle success
     } catch (error) {
       console.error("Error adding favorite:", error);
       toast.error("Failed to add project to favorites.");
@@ -52,33 +53,28 @@ const RecentProjects = () => {
 
   return (
     <div className="container section-gap">
-      {/* Header row */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-center justify-between">
         <SectionTitle
           miniTitle="Projects"
           subtitle="Connect with skilled professionals for your one-off tasks, freelance gigs, or specialized short-term projects."
           title="Recent Projects"
         />
-
-        <div className="flex justify-center md:justify-end">
-          {user ? (
-            <PrimaryButton onClick={() => router.push("/add-projects")}>
-              <div className="flex items-center gap-1 p-1">
-                <Plus />
-                <span>Create Projects</span>
-              </div>
-            </PrimaryButton>
-          ) : (
-            <PrimaryButton onClick={() => router.push("/project")}>
-              <div className="flex items-center justify-center gap-3 text-nowrap p-1">
-                <p>See All Projects</p>
-                <MoveUpRight className="w-4" />
-              </div>
-            </PrimaryButton>
-          )}
-        </div>
+        {user ? (
+          <PrimaryButton onClick={() => router.push("/add-projects")}>
+            <div className="flex items-center gap-1 p-1">
+              <Plus />
+              <span>Create Projects</span>
+            </div>
+          </PrimaryButton>
+        ) : (
+          <PrimaryButton onClick={() => router.push("/project")}>
+            <div className="flex items-center justify-center gap-3 text-nowrap p-1">
+              <p>See All Projects</p>
+              <MoveUpRight className="w-4" />
+            </div>
+          </PrimaryButton>
+        )}
       </div>
-
       {/* Filter dropdown */}
       <div className="w-full md:w-64 mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -88,7 +84,7 @@ const RecentProjects = () => {
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-             className="
+            className="
     block w-full rounded-xl bg-white
     py-3 pl-4 pr-10 text-sm text-gray-700 font-medium shadow-md
     border border-gray-300
@@ -115,25 +111,30 @@ const RecentProjects = () => {
           </span>
         </div>
       </div>
-
-      {/* Projects grid */}
       <WithEmptyState
         data={projects?.data || []}
         emptyStateProps={{
           title: "No projects found",
           description: "There are currently no projects available.",
         }}
-        action={<PrimaryButton onClick={() => {}}>Refresh Projects</PrimaryButton>}
+        action={
+          <PrimaryButton
+            onClick={() => {}}
+            // onClick={() => refreshProjects()}
+          >
+            Refresh Projects
+          </PrimaryButton>
+        }
         loading={isLoading}
         error={error as any}
         spinnerSize="lg"
-        errorMessage="Failed to fetch projects. Please try again later."
+        errorMessage=" Failed to fetch projects. Please try again later."
         errorTitle="Error Fetching Projects"
         loadingMessage="Fetching latest projects..."
-        loadingTitle="Loading Projects"
+        loadingTitle=" Loading Projects"
       >
         {(data) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2">
             {data.map((post, index) => (
               <motion.div
                 key={index}
@@ -142,7 +143,7 @@ const RecentProjects = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.1 * (index + 1), ease: "easeIn" }}
-                className={`border-t sm:odd:border-r ${
+                className={`border-t lg:odd:border-r ${
                   index >= data.length - 2 ? "border-b" : ""
                 }`}
               >
@@ -169,32 +170,34 @@ const RecentProjects = () => {
                   handleToggleFavorite={handleToggleFavorite}
                   id={post.userId === user?.id}
                 />
-                <Modal
-                  isOpen={isModalOpen === index}
-                  onClose={() => setIsModalOpen(null)}
-                >
-                  <BidNowModal
-                    className="xl:w-[500px] md:w-[450px] w-[calc(96vw)]"
-                    name={post.user?.firstName + " " + post.user?.lastName}
-                    avatar={
-                      post.user?.profilePicture ||
-                      "https://i.ibb.co/4f1x5zj/placeholder.png"
-                    }
-                    title={post.name}
-                    postedTime={new Date(post.createdAt).toDateString()}
-                    tags={Object.values(post.skills) as string[]}
-                    budget={post.budget}
-                    priceType={post.priceType}
-                    deadline={post.deadline}
-                    description={post.goal}
-                    scopeWork={post.scopeOfWork as string}
+                {
+                  <Modal
+                    isOpen={isModalOpen === index}
                     onClose={() => setIsModalOpen(null)}
-                    projectId={post.id}
-                    isFavorite={post.isFavorite}
-                    favorite={false}
-                    handleToggleFavorite={handleToggleFavorite}
-                  />
-                </Modal>
+                  >
+                    <BidNowModal
+                      className="xl:w-[500px] md:w-[450px] w-[calc(96vw)]"
+                      name={post.user?.firstName + " " + post.user?.lastName}
+                      avatar={
+                        post.user?.profilePicture ||
+                        "https://i.ibb.co/4f1x5zj/placeholder.png"
+                      }
+                      title={post.name}
+                      postedTime={new Date(post.createdAt).toDateString()}
+                      tags={Object.values(post.skills) as string[]}
+                      budget={post.budget}
+                      priceType={post.priceType}
+                      deadline={post.deadline}
+                      description={post.goal}
+                      scopeWork={post.scopeOfWork as string}
+                      onClose={() => setIsModalOpen(null)}
+                      projectId={post.id}
+                      isFavorite={post.isFavorite}
+                      favorite={false}
+                      handleToggleFavorite={handleToggleFavorite}
+                    />
+                  </Modal>
+                }
               </motion.div>
             ))}
           </div>

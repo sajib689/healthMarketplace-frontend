@@ -259,6 +259,14 @@ export const authApi = baseApi.injectEndpoints({
         };
       },
     }),
+    getAdmin: builder.query<UserResponse, undefined>({
+      query: () => {
+        return {
+          url: `/auth/get-admin`,
+          method: "GET",
+        };
+      },
+    }),
   }),
 });
 
@@ -274,4 +282,5 @@ export const {
   // Export the new hook
   useGetUserBySlugQuery,
   useGetSingleUserByIdQuery,
+  useGetAdminQuery
 } = authApi;

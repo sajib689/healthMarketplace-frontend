@@ -7,7 +7,18 @@ export type TUserInfo = {
   profilePicture?: string | null;
   isOnline?: boolean;
   lastSeen?: Date | null;
+
+  // newly added optional fields
+  role?: string;
+  slug?: string;
+  isDeleted?: boolean;
+  emailVerified?: boolean;
+  userStatus?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  stripeAccountId?: string;
 };
+
 
 export type TMessage = {
   id: string;
@@ -24,7 +35,7 @@ export type TMessage = {
 export type TChatMember = {
   user: TUserInfo;
   lastMessage: string;
-  lastMessageTime: string | Date; 
+  lastMessageTime: string | Date;
   unreadCount: number;
 }
 // For an array of chat members

@@ -103,18 +103,14 @@ export const jobApi = baseApi.injectEndpoints({
       invalidatesTags: ["Jobs"],
     }),
     getJobs: builder.query<JobsListResponse, PaginationParams>({
-  query: ({ limit, jobCategorySlug }) => ({
-    url: "/jobs",
-    method: "GET",
-    params: { limit, jobCategorySlug },   // ✅ send limit & category to backend
-  }),
-  providesTags: ["Jobs"],
-}),
-
-    getRelatedJobs: builder.query<
-      JobsListResponse,
-      RelatedJobsParams & PaginationParams
-    >({
+      query: (data) => ({
+        url: "/jobs",
+        method: "GET",
+        params: data,
+      }),
+      providesTags: ["Jobs"],
+    }),
+    getRelatedJobs: builder.query<JobsListResponse, RelatedJobsParams & PaginationParams>({
       query: (data) => ({
         url: "/jobs/related-job?",
         method: "GET",
@@ -151,17 +147,14 @@ export const jobApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Jobs"],
     }),
-    applyJob: builder.mutation<
-      ApplyJobResponse,
-      {
-        jobId: string;
-        name: string;
-        email: string;
-        position: string;
-        coverLetter: string;
-        resume: File;
-      }
-    >({
+    applyJob: builder.mutation<ApplyJobResponse, {
+      jobId: string;
+      name: string;
+      email: string;
+      position: string;
+      coverLetter: string;
+      resume: File;
+    }>({
       query: ({ jobId, name, email, position, coverLetter, resume }) => {
         const formData = new FormData();
         const payload = {
@@ -169,9 +162,9 @@ export const jobApi = baseApi.injectEndpoints({
           email: email,
           position: position,
           coverLetter: coverLetter,
-        };
-        formData.append("bodyData", JSON.stringify(payload));
-        formData.append("resume", resume);
+        }
+        formData.append('bodyData', JSON.stringify(payload));
+        formData.append('resume', resume);
 
         return {
           url: `/apply-jobs/${jobId}`,
@@ -226,5 +219,5 @@ export const {
   useGetSubCategoriesQuery,
   useGetSubCategoriesByCategoryQuery,
   useGetMyAppliedJobsQuery,
-  useGetRelatedJobsQuery,
+  useGetRelatedJobsQuery
 } = jobApi;

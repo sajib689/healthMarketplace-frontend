@@ -1,7 +1,7 @@
 // context/socket.context.tsx
 "use client";
 
-import Cookies from "js-cookie";
+import { token } from "@/lib/utils";
 import { createContext, useContext, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
@@ -24,12 +24,12 @@ export const useSocket = () => {
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  // console.log("token:", Cookies.get("token"));
+
 
   useEffect(() => {
     // Initialize the socket client
     const socketInstance = io("https://api.healixity.com", {
-      auth: { token: Cookies.get("token") },
+      auth: { token: token },
     });
 
     socketInstance.on("connect", () => {

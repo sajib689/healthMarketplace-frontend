@@ -1,6 +1,7 @@
 "use client";
 
 import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
+import { useGetCategoriesQuery } from "@/redux/api/job/jobApi";
 import { Suggestion, useSuggestionsQuery } from "@/redux/api/others/OthersApi";
 import { useCreateProjectMutation } from "@/redux/api/projects/projectApi";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,6 +10,48 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
+
+const subcategories = [
+  {
+    value: "consulting",
+    option: "Consulting"
+  },
+  {
+    value: "coaching",
+    option: "Coaching"
+  },
+  {
+    value: "expertWitness",
+    option: "Expert Witness"
+  },
+  {
+    value: "writing",
+    option: "Medical Writing / Content Creation"
+  },
+  {
+    value: "resume",
+    option: "Résumé Review"
+  },
+  {
+    value: "tutoring",
+    option: "Tutoring / Test Prep"
+  },
+  {
+    value: "testing",
+    option: "Product Testing & Reviewing"
+  },
+  {
+    value: "interviews",
+    option: "Mock Interviews"
+  },
+  {
+    value: "ambassadors",
+    option: "Brand Ambassadors"
+  },
+]
+
+
 
 const formSchema = z
   .object({
@@ -24,6 +67,8 @@ const formSchema = z
     goal: z.string().min(1, { message: "Project goal is required" }),
     scopeOfWork: z.string().min(1, { message: "Scope of work is required" }),
     category: z.string().min(1, { message: "Category is required" }),
+    subCategory: z.string().min(1, { message: "SubCategory is required" }),
+
   })
   .superRefine((data, ctx) => {
     // Validate required fields based on priceType
@@ -130,6 +175,7 @@ export default function AddNewProject() {
     setValue("budget", ""); // Clear budget when changing price type
   };
 
+  const { data: categoryResponse } = useGetCategoriesQuery({});
   const [createProject, { isLoading }] = useCreateProjectMutation();
 
   const onSubmit = async (data: FormValues) => {
@@ -355,23 +401,67 @@ export default function AddNewProject() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
           <div className="space-y-2">
             <label htmlFor="category" className="text-sm font-medium block">
               Category <span className="text-red-500">*</span>
             </label>
-            <input
+
+            <select
               id="category"
-              type="text"
-              // placeholder="e.g. Telemedicine, HealthTech, etc."
+              defaultValue=""
               {...register("category")}
-              className={`w-full px-3 py-2 border ${errors.category ? "border-red-500" : "border-gray-300"
+              // onChange={(e) => setSelectCategory(e.target.value)}
+              className={`w-full px-3 py-2 border bg-transparent ${errors.category ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-1 focus:ring-primary`}
-            />
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              {categoryResponse?.data.map((cate) => (
+                <option key={cate.id} value={cate.slug}>
+                  {cate.name}
+                </option>
+              ))}
+            </select>
             {errors.category && (
               <p className="text-red-500 text-xs">{errors.category.message}</p>
             )}
           </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="subCategory"
+              className="text-sm font-medium block"
+            >
+              SubCategory <span className="text-red-500">*</span>
+            </label>
+            <select
+              id="subCategory"
+              defaultValue=""
+              {...register("subCategory")}
+              className={`w-full px-3 py-2 border  bg-transparent ${errors.subCategory ? "border-red-500" : "border-gray-300"
+                } rounded-md focus:outline-none focus:ring-1 focus:ring-primary`}
+            >
+              <option value="" disabled>
+                Select a subcategory
+              </option>
 
+              {subcategories.length ? (
+                subcategories.map((cate) => (
+                  <option key={cate.value} value={cate.value}>
+                    {cate.option}
+                  </option>
+                ))
+              ) : (
+                <option>No Subcategory Available</option>
+              )}
+            </select>
+            {errors.subCategory && (
+              <p className="text-red-500 text-xs">
+                {errors.subCategory.message}
+              </p>
+            )}
+          </div>
           <div className="space-y-2">
             <label htmlFor="deadline" className="text-sm font-medium block">
               Deadline <span className="text-red-500">*</span>

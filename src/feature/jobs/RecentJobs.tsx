@@ -7,6 +7,7 @@ import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
 import { MoveUpRight, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { JobCard } from "./card/JobCard";
+import { jobPosts } from "./fakeData";
 import { useGetJobsQuery } from "@/redux/api/job/jobApi";
 import WithEmptyState from "@/components/others/AllState";
 import { Job } from "@/interfaces/global";
@@ -20,7 +21,7 @@ const RecentJobs = () => {
   // State to manage active tab and filtered job posts
   const [activeTab, setActiveTab] = useState("clinical");
   const [, setFilteredPosts] = useState("");
-  const [category, setCategory] = useState<string>("clinical");
+    const [category, setCategory] = useState<string>("clinical");
 
   const {
     data: jobs,
@@ -28,7 +29,7 @@ const RecentJobs = () => {
     error,
   } = useGetJobsQuery({
     limit: 6,
-    jobCategorySlug: category,
+    jobCategorySlug: category ,
   });
 
   // Categories for filtering
@@ -54,44 +55,59 @@ const RecentJobs = () => {
       } else {
         toast.error("Failed to add project to favorites.");
       }
+      // Handle success
     } catch (error) {
       console.error("Error adding favorite:", error);
       toast.error("Failed to add project to favorites.");
     }
   };
 
+  console.log(user)
   return (
     <div className="container section-gap">
-      {/* Header row */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex items-center justify-between">
         <SectionTitle
           miniTitle="Jobs"
           subtitle=""
           title="Explore All Latest Jobs"
         />
-
-        {user?.role !== "INDIVIDUAL" ? (
-          <div className="flex justify-center md:justify-end">
+        {
+          user?.role === "COMPANY" ? <div className="w-fit">
             <PrimaryButton onClick={() => router.push("/add-jobs")}>
               <div className="flex items-center gap-1 p-1">
                 <Plus />
                 <span>Add Job</span>
               </div>
             </PrimaryButton>
-          </div>
-        ) : (
-          <div className="flex justify-center md:justify-end">
-            <PrimaryButton onClick={() => router.push("/jobs")}>
-              <div className="flex items-center justify-center gap-3 text-nowrap p-1">
-                <p>See All Jobs</p>
-                <MoveUpRight className="w-4" />
-              </div>
-            </PrimaryButton>
-          </div>
-        )}
+          </div> : <PrimaryButton onClick={() => router.push("/jobs")}>
+            <div className="flex items-center justify-center gap-3 text-nowrap p-1">
+              <p>See All Jobs</p>
+              <MoveUpRight className="w-4" />
+            </div>
+          </PrimaryButton>
+        }
+
+
       </div>
 
-      {/* Filter dropdown */}
+      {/* Tabs for filtering by category */}
+      <div className="mb-6 overflow-auto hidden">
+        <div className="flex items-center gap-4">
+          {categories.map((category) => (
+            <div
+              key={category}
+              className={`cursor-pointer border-b-2 border-transparent px-4 py-1 ${activeTab === category
+                ? "text-black border-primary"
+                : "text-gray-500"
+                }`}
+              onClick={() => handleTabClick(category)}
+            >
+              {category.charAt(0).toUpperCase() + category.slice(1)}
+            </div>
+          ))}
+        </div>
+      </div>
+             {/* Filter dropdown */}
       <div className="w-full md:w-64">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Filter by category
@@ -128,26 +144,6 @@ const RecentJobs = () => {
           </span>
         </div>
       </div>
-
-      {/* Tabs for filtering by category (optional) */}
-      <div className="mb-6 overflow-auto hidden">
-        <div className="flex items-center gap-4">
-          {categories.map((category) => (
-            <div
-              key={category}
-              className={`cursor-pointer border-b-2 border-transparent px-4 py-1 ${
-                activeTab === category
-                  ? "text-black border-primary"
-                  : "text-gray-500"
-              }`}
-              onClick={() => handleTabClick(category)}
-            >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Display job cards */}
       <WithEmptyState
         data={jobs?.data || []}
@@ -155,17 +151,24 @@ const RecentJobs = () => {
           title: "No Jobs found",
           description: "There are currently no Jobs available.",
         }}
-        action={<PrimaryButton onClick={() => {}}>Refresh Jobs</PrimaryButton>}
+        action={
+          <PrimaryButton
+            onClick={() => { }}
+          // onClick={() => refreshJobs()}
+          >
+            Refresh Jobs
+          </PrimaryButton>
+        }
         loading={isLoadingJobs}
         error={error as any}
         spinnerSize="lg"
-        errorMessage="Failed to fetch Jobs. Please try again later."
+        errorMessage=" Failed to fetch Jobs. Please try again later."
         errorTitle="Error Fetching Jobs"
         loadingMessage="Fetching latest Jobs..."
-        loadingTitle="Loading Jobs"
+        loadingTitle=" Loading Jobs"
       >
         {(data: Job[]) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 mt-4 md:mt-6 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 mt-4 md:mt-6">
             {data.map((post: Job, index: number) => (
               <motion.div
                 key={index}
@@ -174,6 +177,7 @@ const RecentJobs = () => {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
                 transition={{ duration: 0.1 * (index + 1), ease: "easeIn" }}
+                className={` ${index >= jobPosts.length - 2 ? "" : ""}`}
               >
                 <JobCard
                   id={post.id}

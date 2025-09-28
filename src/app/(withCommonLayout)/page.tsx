@@ -10,6 +10,7 @@ const page = () => {
       <Banner />
       {/* <Demo /> */}
       <WorkProcess />
+      {/* job categories is now expert categories  */}
       <JobCategories />
       <RecentProjects />
       <RecentJobs />

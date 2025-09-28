@@ -3,8 +3,7 @@
 import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
 import {
   useCreateJobMutation,
-  useGetCategoriesQuery,
-  useGetSubCategoriesByCategoryQuery,
+  useGetCategoriesQuery
 } from "@/redux/api/job/jobApi";
 import { Suggestion, useSuggestionsQuery } from "@/redux/api/others/OthersApi";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,6 +54,44 @@ const experienceLevelOptions = [
   { value: "Expert", label: "Expert" },
 ];
 
+const subcategories = [
+  {
+    value: "consulting",
+    option: "Consulting"
+  },
+  {
+    value: "coaching",
+    option: "Coaching"
+  },
+  {
+    value: "expertWitness",
+    option: "Expert Witness"
+  },
+  {
+    value: "writing",
+    option: "Medical Writing / Content Creation"
+  },
+  {
+    value: "resume",
+    option: "Résumé Review"
+  },
+  {
+    value: "tutoring",
+    option: "Tutoring / Test Prep"
+  },
+  {
+    value: "testing",
+    option: "Product Testing & Reviewing"
+  },
+  {
+    value: "interviews",
+    option: "Mock Interviews"
+  },
+  {
+    value: "ambassadors",
+    option: "Brand Ambassadors"
+  },
+]
 export default function AddJobs() {
   const [createJob, { isLoading }] = useCreateJobMutation();
 
@@ -67,17 +104,17 @@ export default function AddJobs() {
   );
 
   // to select category for get subcategory
-  const [selectCategory, setSelectCategory] = useState<string | null>(null);
+  // const [selectCategory, setSelectCategory] = useState<string | null>(null);
   // to get subcategory
   const { data: categoryResponse } = useGetCategoriesQuery({});
-  const id =
-    categoryResponse?.data.find((cate) => cate.slug === selectCategory)?.id ||
-    "";
+  // const id =
+  //   categoryResponse?.data.find((cate) => cate.slug === selectCategory)?.id ||
+  //   "";
 
-  const { data: subCategoryResponse } = useGetSubCategoriesByCategoryQuery(
-    { id },
-    { skip: !id }
-  );
+  // const { data: subCategoryResponse } = useGetSubCategoriesByCategoryQuery(
+  //   { id },
+  //   { skip: !id }
+  // );
 
   const {
     register,
@@ -217,8 +254,8 @@ export default function AddJobs() {
               id="jobCategorySlug"
               defaultValue=""
               {...register("jobCategorySlug")}
-              onChange={(e) => setSelectCategory(e.target.value)}
-              className={`w-full px-3 py-2 border ${errors.jobCategorySlug ? "border-red-500" : "border-gray-300"
+              // onChange={(e) => setSelectCategory(e.target.value)}
+              className={`w-full px-3 py-2 border bg-transparent ${errors.jobCategorySlug ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-1 focus:ring-primary`}
             >
               <option value="" disabled>
@@ -247,17 +284,17 @@ export default function AddJobs() {
               id="subCategorySlug"
               defaultValue=""
               {...register("subCategorySlug")}
-              className={`w-full px-3 py-2 border ${errors.subCategorySlug ? "border-red-500" : "border-gray-300"
+              className={`w-full px-3 py-2 border  bg-transparent ${errors.subCategorySlug ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-1 focus:ring-primary`}
             >
               <option value="" disabled>
                 Select a subcategory
               </option>
 
-              {subCategoryResponse?.data[0].children?.length ? (
-                subCategoryResponse.data[0].children.map((cate) => (
-                  <option key={cate.slug} value={cate.slug}>
-                    {cate.name}
+              {subcategories.length ? (
+                subcategories.map((cate) => (
+                  <option key={cate.value} value={cate.value}>
+                    {cate.option}
                   </option>
                 ))
               ) : (
@@ -296,7 +333,7 @@ export default function AddJobs() {
             <select
               id="jobType"
               {...register("jobType")}
-              className={`w-full px-3 py-2 border ${errors.jobType ? "border-red-500" : "border-gray-300"
+              className={`w-full px-3 py-2 border bg-transparent ${errors.jobType ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-1 focus:ring-primary`}
             >
               <option value="" disabled>
@@ -340,7 +377,7 @@ export default function AddJobs() {
             <select
               id="experienceLevel"
               {...register("experienceLevel")}
-              className={`w-full px-3 py-2 border ${errors.experienceLevel ? "border-red-500" : "border-gray-300"
+              className={`w-full px-3 py-2 border bg-transparent ${errors.experienceLevel ? "border-red-500" : "border-gray-300"
                 } rounded-md focus:outline-none focus:ring-1 focus:ring-primary`}
             >
               <option value="" disabled>
