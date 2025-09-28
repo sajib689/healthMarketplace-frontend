@@ -6,94 +6,56 @@ import useAuthUser from "@/hooks/useGetMe";
 import { Job } from "@/interfaces/global";
 import { useToggleFavoriteMutation } from "@/redux/api/favourite/favApi";
 import {
-  useGetJobsQuery,
-  useGetSubCategoriesQuery,
+  useGetJobsQuery, 
 } from "@/redux/api/job/jobApi";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { JobCard } from "./card/JobCard";
-import CategoryFilter from "./CategoryFilter";
-import { jobPosts } from "./fakeData";
-
-// const healthProjectKeywords = [
-//   "Patient Tracker",
-//   "Meal Planning",
-//   "Physiotherapy Guide",
-//   "Medication Reminder",
-//   "Telemedicine",
-//   "Vitals Monitoring",
-//   "Symptom Checker",
-//   "Hospital Sanitation",
-//   "Healthcare Networking",
-//   "Sleep Tracker",
-// ];
 
 const AllJobs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-  // const [suggestions, setSuggestions] = useState<string[]>([]);
 
-  // to get category from params and store in a state to refetch again
-  const categoryParams = useSearchParams().get("category");
-  const [category, setCategory] = useState<string | null>(categoryParams);
+  // get params
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const jobType = searchParams.get("type");
+  const router = useRouter();
+
+  // category state synced with URL param
+  const [category, setCategory] = useState<string | null>(categoryParam);
+
+  // sync when URL param changes
+  useEffect(() => {
+    setCategory(categoryParam);
+    setCurrentPage(1);
+  }, [categoryParam]);
 
   const { user } = useAuthUser();
-  const router = useRouter();
   const [activeFilters] = useState<string[]>([]);
 
   // Debounce search input
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setCurrentPage(1); // Reset to first page when search changes
+      setCurrentPage(1);
     }, 300);
-
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Generate suggestions based on search input
-  useEffect(() => {
-    if (!search.trim()) {
-      // setSuggestions([]);
-      return;
-    }
-
-    // const searchLower = search.toLowerCase();
-
-    // const allSuggestions = [
-    //   ...healthProjectKeywords,
-    //   ...jobPosts.map((job) => job.title), // Job titles
-    //   ...jobPosts.flatMap((job) => job.tags?.map((tag) => tag.name) || []), // Required skills
-    // ].filter((item, index, self) => self.indexOf(item) === index); // Remove duplicates
-
-    // const filteredSuggestions = allSuggestions
-    //   .filter((item) => item.toLowerCase().includes(searchLower))
-    //   .slice(0, 5); // Limit to 5 suggestions
-
-    // setSuggestions(filteredSuggestions);
-  }, [search]);
-
+  // Combine search & filters
   const searchTerm = useMemo(() => {
-    const terms = [];
-
-    // Add text search
-    if (debouncedSearch.trim()) {
-      terms.push(debouncedSearch.trim());
-    }
-
-    // Add active filters (except "All")
+    const terms: string[] = [];
+    if (debouncedSearch.trim()) terms.push(debouncedSearch.trim());
     const skillFilters = activeFilters.filter((filter) => filter !== "All");
-    if (skillFilters.length > 0) {
-      terms.push(...skillFilters);
-    }
-
+    if (skillFilters.length > 0) terms.push(...skillFilters);
     return terms.join(" ");
   }, [debouncedSearch, activeFilters]);
 
-  // For getting all jobs
+  // Fetch jobs
   const {
     data: jobs,
     isLoading: isLoadingJobs,
@@ -102,35 +64,29 @@ const AllJobs = () => {
     limit: 10,
     page: currentPage,
     searchTerm: searchTerm || undefined,
-    subCategorySlug: category || undefined,
+    jobCategorySlug: category || undefined,
+    jobType: jobType || undefined,
   });
 
-  const { data: categoryResponse } = useGetSubCategoriesQuery();
+  // Fetch categories
 
-  const toggleFilter = (keyword: string) => {
-    setCategory(keyword);
-
-    const params = new URLSearchParams(categoryParams?.toString());
+  // Change category filter (push URL param)
+  const handleCategoryChange = (keyword: string) => {
+    const params = new URLSearchParams(searchParams.toString());
     params.set("category", keyword);
-
     router.push(`?${params.toString()}`);
   };
 
-  // Calculate total pages from API response
+  // Pagination
   const totalPages = jobs?.meta?.totalPage || 1;
   const totalProjects = jobs?.meta?.total || 0;
-
-  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // Scroll to top when page changes
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const filterCategory = categoryResponse?.data.map((cate) => cate) || [];
-
+  // Favorite toggle
   const [toggleFavorite] = useToggleFavoriteMutation();
-
   const handleToggleFavorite = async (
     itemId: string,
     itemType: "JOB" | "PROJECT"
@@ -142,31 +98,69 @@ const AllJobs = () => {
       } else {
         toast.error("Failed to add project to favorites.");
       }
-      // Handle success
     } catch (error) {
       console.error("Error adding favorite:", error);
       toast.error("Failed to add project to favorites.");
     }
   };
 
-  // Handle suggestion selection
-  // const handleSuggestionSelect = (suggestion: string) => {
-  //   setSearch(suggestion);
-  //   setSuggestions([]); // Clear suggestions after selection
-  // };
-
   return (
     <div className="">
-      <CategoryFilter
-        // search={search}
-        setSearch={setSearch}
-        activeFilters={activeFilters}
-        filterCategory={filterCategory}
-        toggleFilter={toggleFilter}
-      // suggestions={suggestions}
-      // onSuggestionSelect={handleSuggestionSelect}
-      />
+      {/* Search */}
+      <div className="relative flex items-center gap-2 bg-white rounded-full p-1 lg:p-2 shadow-sm w-full max-w-md lg:max-w-xl border">
+        <input
+          type="text"
+          placeholder="Search work"
+          className="flex-1 outline-none px-2 py-2 rounded-lg text-sm"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <PrimaryButton
+          onClick={() => setDebouncedSearch(search)}
+          text="Search"
+        />
+      </div>
 
+      {/* Category filter */}
+      <div className="w-full md:w-64 mt-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Filter by category
+        </label>
+        <div className="relative">
+          <select
+            value={category || ""}
+            onChange={(e) => handleCategoryChange(e.target.value)}
+            className="
+              block w-full rounded-xl bg-white
+              py-3 pl-4 pr-10 text-sm text-gray-700 font-medium shadow-md
+              border border-gray-300
+              hover:border-gray-400 transition-all duration-200 ease-in-out
+              focus:bg-white focus:border-primary/80 focus:ring-2 focus:ring-primary/80 focus:ring-offset-1
+              appearance-none
+            "
+          >
+<option value="clinical">Clinical</option>
+            <option value="non-clinical">Non Clinical</option>
+         
+          </select>
+          <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+            <svg
+              className="h-5 w-5 text-gray-500"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.25a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      {/* Job list */}
       <WithEmptyState
         data={jobs?.data || []}
         emptyStateProps={{
@@ -175,8 +169,9 @@ const AllJobs = () => {
         }}
         action={
           <PrimaryButton
-            onClick={() => { }}
-          // onClick={() => refreshJobs()}
+            onClick={() => {
+              // trigger a refetch if needed
+            }}
           >
             Refresh Jobs
           </PrimaryButton>
@@ -184,22 +179,23 @@ const AllJobs = () => {
         loading={isLoadingJobs}
         error={typeof error === "string" ? error : !!error}
         spinnerSize="lg"
-        errorMessage=" Failed to fetch Jobs. Please try again later."
+        errorMessage="Failed to fetch Jobs. Please try again later."
         errorTitle="Error Fetching Jobs"
         loadingMessage="Fetching latest Jobs..."
-        loadingTitle=" Loading Jobs"
+        loadingTitle="Loading Jobs"
       >
         {(data: Job[]) => (
-          <div className="grid grid-cols-1 lg:grid-cols-2 mt-4 md:mt-6">
-            {data.map((post: Job, index: number) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 mt-4 md:mt-6 gap-4">
+            {data?.map((post: Job, index: number) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0 }}
-                animate
-                whileInView={{ opacity: 1 }}
+                animate={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.1 * (index + 1), ease: "easeIn" }}
-                className={` ${index >= jobPosts.length - 2 ? "" : ""}`}
+                transition={{
+                  duration: Math.min(0.1 * (index + 1), 0.5),
+                  ease: "easeIn",
+                }}
               >
                 <JobCard
                   id={post.id}
@@ -225,8 +221,8 @@ const AllJobs = () => {
       <div className="mb-4 mt-4 text-center text-sm text-gray-600">
         {searchTerm && (
           <p>
-            Showing {jobs?.data?.length || 0} of {totalProjects} results
-            {searchTerm && ` for "${searchTerm}"`}
+            Showing {jobs?.data?.length || 0} of {totalProjects} results for 
+            {searchTerm} 
           </p>
         )}
         {!searchTerm && (
@@ -236,6 +232,7 @@ const AllJobs = () => {
         )}
       </div>
 
+      {/* Pagination */}
       <div className="my-6 md:my-12">
         <Pagination
           currentPage={currentPage}

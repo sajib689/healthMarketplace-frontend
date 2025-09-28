@@ -27,6 +27,7 @@ const AllProjects = () => {
   const searchParams = useSearchParams();
   const { data: suggestions } = useSuggestionsQuery("")
   const id = searchParams.get("ids") || "";
+  const category =  searchParams.get("category")
   const { user } = useAuthUser();
   console.log(suggestions)
   // Use debounced search to avoid too many API calls
@@ -72,6 +73,7 @@ const AllProjects = () => {
     limit: 10,
     page: currentPage,
     searchTerm: searchTerm || undefined,
+    category: category || undefined
   });
 
 

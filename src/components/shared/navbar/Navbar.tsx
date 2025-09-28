@@ -28,6 +28,10 @@ export const navItems = [
     ],
   },
   {
+    name: "Plans",
+    link: "/my-plans",
+  },
+  {
     name: "FAQ",
     link: "/faq",
   },

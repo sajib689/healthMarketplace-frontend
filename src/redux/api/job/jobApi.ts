@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CreateJobRequest,
   JobResponse,
@@ -102,14 +103,24 @@ export const jobApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Jobs"],
     }),
-    getJobs: builder.query<JobsListResponse, PaginationParams>({
-      query: (data) => ({
-        url: "/jobs",
-        method: "GET",
-        params: data,
-      }),
-      providesTags: ["Jobs"],
-    }),
+  getJobs: builder.query<JobsListResponse, PaginationParams>({
+  query: ({ limit, page, searchTerm, jobCategorySlug, jobType }) => {
+    const params: Record<string, any> = {limit,page};
+
+ if (searchTerm) params.searchTerm = searchTerm;
+    if (jobCategorySlug) params.jobCategorySlug = jobCategorySlug;
+    if (jobType) params.jobType = jobType;
+
+    return {
+      url: "/jobs",
+      method: "GET",
+      params,
+    };
+  },
+  providesTags: ["Jobs"],
+}),
+
+
     getRelatedJobs: builder.query<JobsListResponse, RelatedJobsParams & PaginationParams>({
       query: (data) => ({
         url: "/jobs/related-job?",

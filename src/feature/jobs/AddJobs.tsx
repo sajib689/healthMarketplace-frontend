@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
@@ -8,6 +9,7 @@ import {
 import { Suggestion, useSuggestionsQuery } from "@/redux/api/others/OthersApi";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { redirect } from "next/navigation";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -195,10 +197,21 @@ export default function AddJobs() {
         setSkillInput("");
       }
       toast.success("Job created successfully!");
-    } catch (error) {
-      console.error("Failed to create job:", error);
-      toast.error("Failed to create job. Please try again.");
-    }
+    } catch (error: any) {
+  console.error("Failed to create job:", error);
+
+  const errorMessage =
+    error?.data?.message ||
+    error?.data?.errorMessages?.[0]?.message ||
+    "Something went wrong";
+
+  toast.error(errorMessage);
+  if(errorMessage) {
+    redirect('/my-plans')
+  }
+}
+
+
   };
 
   return (

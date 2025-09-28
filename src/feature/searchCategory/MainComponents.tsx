@@ -101,7 +101,7 @@ const MainComponents = ({ activeCategory }: { activeCategory: Category }) => {
 
     const handleRedirect = (main: string, sub: string, type?: string) => {
         let url = `/${main.toLowerCase()}?category=${sub.toLowerCase()}`;
-        if (type) url += `&type=${type.toLowerCase()}`;
+        if (type) url += `&jobType=${type.toLowerCase()}`;
         router.push(url);
     };
 

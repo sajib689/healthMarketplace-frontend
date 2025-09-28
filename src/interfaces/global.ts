@@ -295,6 +295,7 @@ export interface PaginationParams {
   subCategorySlug?: string;
   jobCategorySlug?: string;
   category?: string;
+  jobType?: string;
 }
 
 type Applicant = {

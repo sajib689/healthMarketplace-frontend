@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   CreateProjectBody,
   PaginationParams,
@@ -32,13 +33,21 @@ export const projectApi = baseApi.injectEndpoints({
       query: () => "/project/my-projects",
       providesTags: ["Project"],
     }),
-   getAllProjects: builder.query<ProjectsResponse, PaginationParams>({
-      query: ({ limit, page, searchTerm, category  }) => ({
-        url: "/project",
-        params: { limit, page, searchTerm, category  },
-      }),
-      providesTags: ["Project"],
-    }),
+  getAllProjects: builder.query<ProjectsResponse, PaginationParams>({
+  query: ({ limit, page, searchTerm, category }) => {
+    // build params only with defined values
+    const params: Record<string, any> = { limit, page };
+    if (searchTerm) params.searchTerm = searchTerm;
+    if (category) params.category = category;
+ 
+    return {
+      url: "/project",
+      params,
+    };
+  },
+  providesTags: ["Project"],
+}),
+
     getProjectBySlug: builder.query<ProjectResponse, string>({
       query: (slug) => `/project/${slug}`,
       providesTags: (result, error, slug) => [{ type: "Project", slug }],
