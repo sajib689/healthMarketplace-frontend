@@ -10,7 +10,7 @@ import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-
+import { useRouter } from "next/navigation";
 
 const subcategories = [
   {
@@ -112,7 +112,7 @@ export default function AddNewProject() {
   const [filteredSuggestions, setFilteredSuggestions] = useState<Suggestion[]>(
     data?.data ?? []
   );
-
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -200,6 +200,7 @@ export default function AddNewProject() {
       const result = await createProject(projectData).unwrap();
       if (result.success) {
         toast.success("Project created successfully:");
+        router.push("/my-project#my-project")
       } else {
         toast.error(`Failed to create project: ${result.message}`);
         // Handle error (show error message, etc.)

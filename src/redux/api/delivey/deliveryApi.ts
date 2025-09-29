@@ -1,4 +1,8 @@
-import { DeliveryResponse, PaginationParams, SingleDeliveryResponse } from "@/interfaces/global";
+import {
+  DeliveryResponse,
+  PaginationParams,
+  SingleDeliveryResponse,
+} from "@/interfaces/global";
 import baseApi from "@/redux/api/baseApi";
 
 export const deliveryApi = baseApi.injectEndpoints({
@@ -49,6 +53,19 @@ export const deliveryApi = baseApi.injectEndpoints({
       },
       providesTags: ["Delivery"],
     }),
+   cancelDelivery: builder.mutation<
+  SingleDeliveryResponse,               
+  { id: string; body: Record<string, any> } 
+>({
+  query: ({ id, body }) => ({
+    url: `/delivery/status/${id}`,
+    method: "PUT",
+    body,
+  }),
+  invalidatesTags: ["Delivery", "Project"],
+}),
+
+
   }),
 });
 
@@ -56,5 +73,6 @@ export const {
   useGetAllDeliverySubmittedQuery,
   useGetAllCancelledDeliveryQuery,
   useCreateDeliveryMutation,
-  useGetSingleDeliveryQuery
+  useGetSingleDeliveryQuery,
+    useCancelDeliveryMutation,
 } = deliveryApi;

@@ -257,14 +257,12 @@ const TalentProfile = () => {
   const searchParams = useSearchParams();
   const consultationId = searchParams.get("con");
   const router = useRouter();
-  console.log("searchparam :", consultationId);
   const copyUrl = useCopyUrl();
   const { data: singleConsultation } = useGetConsultationByIdQuery(
     consultationId!
   );
 
-  console.log("Consultation ID:", consultationId);
-  console.log("Consultation Data:", singleConsultation);
+
 
   // Fetch user data by slug
   const {
@@ -274,9 +272,6 @@ const TalentProfile = () => {
   } = useGetUserBySlugQuery(slug, {
     skip: !slug,
   });
-
-  console.log("doctor slug data:", myData); // Log full response
-  console.log("user data:", myData?.data); // Log user object
 
   const user: User | undefined = myData?.data;
 

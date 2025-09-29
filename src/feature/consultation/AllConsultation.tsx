@@ -12,13 +12,15 @@ import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
 import WithEmptyState from "@/components/others/AllState";
 import { Consultation } from "@/interfaces/global";
 import { Suggestion, useSuggestionsQuery } from "@/redux/api/others/OthersApi";
+import useAuthUser from "@/hooks/useGetMe";
 
 const AllConsultation = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState<string>("");
-  const [activeFilters, ] = useState<string[]>([]);
+  const [activeFilters] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState<number | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+    const { user } = useAuthUser();
 
   const [, setSuggestions] = useState<string[]>([]);
   const { data: suggestion } = useSuggestionsQuery("");
@@ -26,7 +28,7 @@ const AllConsultation = () => {
   const router = useRouter();
 
   // category state
-  const [category, setCategory] = useState<string>("");
+  const [category] = useState<string>("");
 
   // Debounce search input
   useEffect(() => {
@@ -90,10 +92,10 @@ const AllConsultation = () => {
   const totalResults = myConsultation?.meta?.total || 0;
 
   // handle category change
-  const handleCategoryChange = (value: string) => {
-    setCategory(value);
-    setCurrentPage(1);
-  };
+  // const handleCategoryChange = (value: string) => {
+  //   setCategory(value);
+  //   setCurrentPage(1);
+  // };
 
   return (
     <div className="">
@@ -113,7 +115,7 @@ const AllConsultation = () => {
       </div>
 
       {/* Category filter */}
-      <div className="w-full md:w-64 mt-4">
+      {/* <div className="w-full md:w-64 mt-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Filter by category
         </label>
@@ -149,7 +151,7 @@ const AllConsultation = () => {
             </svg>
           </span>
         </div>
-      </div>
+      </div> */}
 
       <WithEmptyState
         data={myConsultation?.data || []}
@@ -198,8 +200,14 @@ const AllConsultation = () => {
                   skills={doctor.adviceOn}
                   description={doctor.description}
                   imageUrl={doctor.user?.profilePicture || null}
-                  onMessage={() =>
-                    router.push(`/messaging?user=${doctor.user?.id}`)
+                  onMessage={() => {
+                    if(user) {
+                      router.push(`/messaging?user=${doctor.user?.id}`)
+                    } else {
+                      router.push("/signIn")
+                    }
+                  }
+                    
                   }
                   onVisitProfile={() => setIsModalOpen(index)}
                 />
@@ -217,11 +225,20 @@ const AllConsultation = () => {
                     skills={doctor.adviceOn}
                     description={doctor.description}
                     imageUrl={doctor.user?.profilePicture || null}
-                    onMessage={() =>
+                  onMessage={() => {
+                    if(user) {
                       router.push(`/messaging?user=${doctor.user?.id}`)
+                    } else {
+                      router.push("/signIn")
                     }
+                    
+                  }
+                    
+                  }
                     onVisitProfile={() =>
-                      router.push(`/experts/${doctor.user?.slug}?con=${doctor.id}`)
+                      router.push(
+                        `/experts/${doctor.user?.slug}?con=${doctor.id}`
+                      )
                     }
                   />
                 </Modal>
@@ -235,12 +252,13 @@ const AllConsultation = () => {
       <div className="mb-4 mt-4 text-center text-sm text-gray-600">
         {searchTerm ? (
           <p>
-            Showing {myConsultation?.data?.length || 0} of {totalResults} results
-            for {searchTerm}
+            Showing {myConsultation?.data?.length || 0} of {totalResults}{" "}
+            results for {searchTerm}
           </p>
         ) : (
           <p>
-            Showing {myConsultation?.data?.length || 0} of {totalResults} consultations
+            Showing {myConsultation?.data?.length || 0} of {totalResults}{" "}
+            consultations
           </p>
         )}
       </div>

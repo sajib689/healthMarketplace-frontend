@@ -1,8 +1,10 @@
+"use client"
 import React from "react";
 import Image from "next/image";
 import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
 import { Share2 } from "lucide-react";
-
+import useAuthUser from "@/hooks/useGetMe";
+import { useRouter } from "next/navigation";
 interface ProfileCardProps {
   availability: boolean;
   handleBook: () => void;
@@ -16,7 +18,7 @@ interface ProfileCardProps {
   description: string;
   imageUrl: string;
   bio: string;
-  copyUrl: () => void
+  copyUrl: () => void;
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -27,8 +29,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
   hourlyRate,
   rating,
   imageUrl,
-  copyUrl
+  copyUrl,
 }) => {
+  const { user } = useAuthUser();
+  const router = useRouter()
   return (
     <div className="border-b">
       <div className="bg-white rounded-xl shadow-sm py-6">
@@ -45,8 +49,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             <div className="space-y-4">
               <p className="pr-1 border-r flex items-center gap-1">
                 <span
-                  className={`${availability ? "bg-green-600 border" : "bg-gray-400"
-                    } W-2 h-2 rounded-full p-[3px]`}
+                  className={`${
+                    availability ? "bg-green-600 border" : "bg-gray-400"
+                  } W-2 h-2 rounded-full p-[3px]`}
                 />
                 <span
                   className={availability ? "text-green-600" : "text-gray-400"}
@@ -73,9 +78,19 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           {/* Left Column */}
           <div className="space-y-4">
             <div className="w-fit ml-auto">
-              <PrimaryButton onClick={handleBook}>Message Now</PrimaryButton>
-            </div>
-            <button onClick={copyUrl} className="px-5 text-primary py-2 bg-primary/20 border-primary border rounded-full flex items-center justify-end text-sm ml-auto gap-2">
+  {user ? (
+    <PrimaryButton onClick={handleBook}>Message Now</PrimaryButton>
+  ) : (
+    <PrimaryButton onClick={() => router.push("/signIn")}>
+      Sign In to Message
+    </PrimaryButton>
+  )}
+</div>
+
+            <button
+              onClick={copyUrl}
+              className="px-5 text-primary py-2 bg-primary/20 border-primary border rounded-full flex items-center justify-end text-sm ml-auto gap-2"
+            >
               <Share2 size={15} />
               share
             </button>

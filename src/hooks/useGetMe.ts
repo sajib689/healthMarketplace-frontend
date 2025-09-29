@@ -26,7 +26,7 @@ const profile = [
   {
     name: "Support",
     link: "/support",
-  }
+  },
 ];
 
 const useAuthUser = () => {

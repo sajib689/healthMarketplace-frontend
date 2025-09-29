@@ -3,6 +3,7 @@
 import banner from "@/assets/consultation/banner.png";
 import Loading from "@/components/others/Loading";
 import PrimaryButton from "@/components/shared/primaryButton/PrimaryButton";
+import useAuthUser from "@/hooks/useGetMe";
 import { useCreateBookingMutation } from "@/redux/api/booking/bookingApi";
 import {
   useGetConsultationByIdQuery,
@@ -47,6 +48,7 @@ export default function ConsultationDetailsPage() {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [availableTimeSlots, setAvailableTimeSlots] = useState<TimeSlot[]>([]); // NEW STATE
   const [isCheckingAvailability, setIsCheckingAvailability] = useState(false); // NEW STATE
+    const { user } = useAuthUser();
 
   const router = useRouter();
 
@@ -396,7 +398,14 @@ export default function ConsultationDetailsPage() {
         <div className="mt-auto space-y-2">
           <PrimaryButton
             loading={isBooking}
-            onClick={handleBooking}
+            onClick={() => {
+              if(user) {
+                handleBooking()
+              } else {
+                              router.push("/signIn")
+
+              }
+            }}
           // disabled={!selectedOption || !selectedDate || !selectedTime || isCheckingAvailability}
           >
             Book Now

@@ -9,13 +9,14 @@ interface DecodedToken {
 }
 
 export const hasAccess = ({ roles, event }: { roles: string[]; event: () => void }) => {
+    console.log(roles)
     if (!token) {
         toast.warning("No token found");
         return;
     }
 
     const decodedUser = jwtDecode<DecodedToken>(token);
-
+console.log(decodedUser)
     const currentTime = Date.now() / 1000;
     if (decodedUser.exp < currentTime) {
         toast.warning("Session expired, please log in again");
