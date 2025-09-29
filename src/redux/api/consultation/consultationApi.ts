@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   ConsultationResponse,
   ConsultationsListResponse,
@@ -40,10 +42,15 @@ const consultation = baseApi.injectEndpoints({
       ConsultationsListResponse,
       PaginationParams
     >({
-      query: ({ limit, page, searchTerm }) => ({
-        url: "/consultation",
-        params: { limit, page, searchTerm },
-      }),
+      query: ({ limit, page, title }) => {
+        const params: Record<string, any> = { limit, page };
+        if (title) params.title = title; 
+        return {
+          url: "/consultation",
+          method: "GET",
+          params,
+        };
+      },
       providesTags: ["Consultation"],
     }),
 

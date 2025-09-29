@@ -93,7 +93,8 @@ const RecentProjects = () => {
     appearance-none
   "
           >
-            <option value="YourCategoryValue">YourCategoryValue</option>
+           <option value="clinical">Clinical</option>
+            <option value="non-clinical">Non Clinical</option>
           </select>
           <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
             <svg

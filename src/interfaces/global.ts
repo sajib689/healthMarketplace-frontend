@@ -296,6 +296,7 @@ export interface PaginationParams {
   jobCategorySlug?: string;
   category?: string;
   jobType?: string;
+  title?: string;
 }
 
 type Applicant = {
