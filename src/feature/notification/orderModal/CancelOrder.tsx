@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useCancelDeliveryMutation } from "@/redux/api/delivey/deliveryApi";
 import Image from "next/image";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 const cancellationReasons = [
   {
@@ -41,26 +45,46 @@ const CancelOrder = ({
   setModalState: React.Dispatch<React.SetStateAction<string>>;
   samplePost: any;
 }) => {
-  const [selectedReason, setSelectedReason] = useState<string | undefined>(
-    undefined
-  );
+  const [selectedReason, setSelectedReason] = useState<string | undefined>();
   const [otherReason, setOtherReason] = useState("");
+  console.log("smaplePost", samplePost);
+  const [cancelDelivery, { isLoading }] = useCancelDeliveryMutation();
 
   const handleReasonChange = (value: string) => {
     setSelectedReason(value);
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const reason = selectedReason === "others" ? otherReason : selectedReason;
-    console.log("Cancellation reason:", reason);
+    if (!reason) return; // guard if nothing selected
+
+    try {
+      const res = await cancelDelivery({
+        id: samplePost.id,
+        body: { cancelReason: reason },
+      }).unwrap();
+
+      console.log("Cancel successful:", res);
+      setModalState("infoModal"); // close modal after success
+    } catch (err: any) {
+      console.error("Cancel failed:", err);
+
+      const apiMessage =
+        err?.data?.message ||
+        err?.data?.errorMessages?.[0]?.message ||
+        "Failed to cancel the order. Please try again.";
+
+      toast.error(apiMessage);
+    }
   };
 
   return (
-    <div className="p-4 ">
+    <div className="p-4">
       <h1 className="text-lg mb-2 font-semibold">
-        Why you are Cancel the Order
+        Why are you cancelling the order?
       </h1>
+
+      {/* Profile Info */}
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <Image
@@ -97,6 +121,8 @@ const CancelOrder = ({
           </div>
         </div>
       </div>
+
+      {/* Reason Selection */}
       <div className="mb-6 mt-4">
         <h2 className="text-base font-medium mb-4">Cancellation Reason</h2>
 
@@ -128,27 +154,39 @@ const CancelOrder = ({
         {selectedReason === "others" && (
           <div className="mt-3">
             <input
-              placeholder="Please specify your reason "
+              placeholder="Please specify your reason"
               value={otherReason}
               onChange={(e) => setOtherReason(e.target.value)}
-              className="w-full border-gray-200 p-1 outline-none"
+              className="w-full border-gray-200 p-2 outline-none rounded-md"
             />
           </div>
         )}
       </div>
+
       {/* CTA Buttons */}
       <div className="flex items-center justify-end gap-4 mt-4">
         <button
           onClick={() => setModalState("infoModal")}
-          className="w-full sm:w-auto px-6 py-2 bg-gray-300/80 text-black hover:bg-gray-300  font-medium rounded-xl transition-colors"
+          className="w-full sm:w-auto px-6 py-2 bg-gray-300/80 text-black hover:bg-gray-300 font-medium rounded-xl transition-colors"
         >
           Back
         </button>
         <button
-          // onClick={() => setModalState("OtherReason")}
-          className="w-full sm:w-auto px-6 py-2 bg-secondary/80 hover:bg-secondary text-white font-medium rounded-xl transition-colors"
+          onClick={handleSubmit}
+          disabled={
+            !selectedReason ||
+            (selectedReason === "others" && !otherReason) ||
+            isLoading
+          }
+          className={`w-full sm:w-auto px-6 py-2 font-medium rounded-xl transition-colors ${
+            !selectedReason ||
+            (selectedReason === "others" && !otherReason) ||
+            isLoading
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-secondary/80 hover:bg-secondary text-white"
+          }`}
         >
-          Submit
+          {isLoading ? "Submitting..." : "Submit"}
         </button>
       </div>
     </div>

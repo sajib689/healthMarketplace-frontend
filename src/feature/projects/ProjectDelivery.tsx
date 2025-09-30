@@ -41,7 +41,7 @@ const ProjectDelivery = () => {
   console.log(myData);
   // Extract project and user data
   const delivery = myData?.data;
-
+console.log('sajib', delivery);
   // Format posted time (e.g., "2 days ago")
   const postedTime = new Date(delivery?.createdAt).toLocaleDateString("en-US", {
     month: "short",
@@ -79,11 +79,11 @@ const ProjectDelivery = () => {
             width={48}
             height={48}
             src={
-              delivery?.agreement.project.user?.profilePicture ||
+              delivery?.agreement?.project?.user?.profilePicture ||
               UserPlaceholder.src
             } // Fallback image
-            alt={`${delivery?.agreement.project.user?.firstName ?? ""} ${
-              delivery?.agreement.project.user?.lastName ?? ""
+            alt={`${delivery?.agreement?.project?.user?.firstName ?? ""} ${
+              delivery?.agreement?.project?.user?.lastName ?? ""
             }`}
             className="w-12 h-12 rounded-full object-cover"
             blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMCAyMCI+PHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZWVlZWVlIi8+PC9zdmc+"
@@ -268,6 +268,7 @@ const ProjectDelivery = () => {
             onClose={() => setModalAction(null)}
           >
             <OrderModal
+            id={delivery?.id as string}
               name={`${delivery?.agreement.freelancer.firstName ?? ""} ${
                 delivery?.agreement.freelancer.lastName ?? ""
               }`}

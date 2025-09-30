@@ -42,10 +42,9 @@ const Navbar = () => {
   const [fetch, setFetch] = useState(true);
 
   const { socket } = useSocket();
-  const [unreadCount, setUnreadCount] = useState<number>(0);
-
+  const [, setUnreadCount] = useState<number>(0);
+  const [unread, setUnread] = useState<number>(0);
   const { user, profileLinks, handleLogout } = useAuthUser();
-
   useEffect(() => {
     if (!socket) return;
 
@@ -139,7 +138,7 @@ const Navbar = () => {
                   <BellRing onClick={() => console.log("cliekced")} className="w-7 h-7 z-50" />
                   <div className="absolute -top-2 right-0">
                     <p className="bg-primary py-[2px] px-1 text-sm rounded-full">
-                      {unreadCount}
+                      {unread}
                     </p>
                   </div>
                 </div>
@@ -149,7 +148,7 @@ const Navbar = () => {
                       <div className="navSubLink bg-slate-50 p-[3px]">
                         <ul className="bg-white navSubLink">
                           <MainNotifications
-                            // setUnread={setUnread}
+                            setUnread={setUnread}
                             fetch={fetch}
                           />
                         </ul>

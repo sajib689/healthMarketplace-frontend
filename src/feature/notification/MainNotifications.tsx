@@ -14,12 +14,15 @@ const MainNotifications = ({
 }) => {
   const userId = useAuthUser()?.user?.id;
 
-  const { notifications, unreadCount, getNotifications } =
+  const { notifications, getNotifications } =
     useNotifications(userId);
+    const total = notifications.length
+        if(total){
+          setUnread(total)
+        }
 
   useEffect(() => {
     getNotifications();
-    setUnread?.(unreadCount);
   }, [fetch]);
 
   return (
